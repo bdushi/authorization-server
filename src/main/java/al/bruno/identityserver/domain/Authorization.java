@@ -1,48 +1,63 @@
 package al.bruno.identityserver.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.Instant;
 
 @Entity
+@Table(name = "authorization")
 public class Authorization {
     @Id
     private final String id;
+    @Column(name = "registered_client_id", length = 4000)
     private final String registeredClientId;
+    @Column(name = "principal_name", nullable = false)
     private final String principalName;
+    @Column(name = "authorization_grant_type", nullable = false)
     private final String authorizationGrantType;
-    @Column(length = 4000)
+    @Column(name = "attributes", length = 4000)
     private final String attributes;
-    @Column(length = 500)
+    @Column(name = "state", length = 500)
     private final String state;
-    @Column(length = 4000)
+    @Column(name = "authorization_code_value", length = 4000)
     private String authorizationCodeValue;
+    @Column(name = "authorization_code_issued_at", nullable = false)
     private Instant authorizationCodeIssuedAt;
+    @Column(name = "authorization_code_expires_at", nullable = false)
     private Instant authorizationCodeExpiresAt;
+    @Column(name = "authorization_code_metadata", nullable = false)
     private String authorizationCodeMetadata;
-    @Column(length = 4000)
+    @Column(name = "access_token_value", length = 4000)
     private String accessTokenValue;
+    @Column(name = "access_token_issued_at", nullable = false)
     private Instant accessTokenIssuedAt;
+    @Column(name = "access_token_expires_at", nullable = false)
     private Instant accessTokenExpiresAt;
-    @Column(length = 2000)
+    @Column(name = "access_token_metadata", length = 2000)
     private String accessTokenMetadata;
+    @Column(name = "access_token_type", nullable = false)
     private String accessTokenType;
-    @Column(length = 1000)
+    @Column(name = "access_token_scopes", length = 1000)
     private String accessTokenScopes;
-    @Column(length = 4000)
+    @Column(name = "refresh_token_value", length = 4000)
     private String refreshTokenValue;
+    @Column(name = "refresh_token_issued_at", nullable = false)
     private Instant refreshTokenIssuedAt;
+    @Column(name = "refresh_token_expires_at", nullable = false)
     private Instant refreshTokenExpiresAt;
-    @Column(length = 2000)
+    @Column(name = "refresh_token_metadata", length = 2000)
     private String refreshTokenMetadata;
-    @Column(length = 4000)
+    @Column(name = "oidc_id_token_value", length = 4000)
     private String oidcIdTokenValue;
+    @Column(name = "oidc_id_token_issued_at", nullable = false)
     private Instant oidcIdTokenIssuedAt;
+    @Column(name = "oidc_id_token_expires_at", nullable = false)
     private Instant oidcIdTokenExpiresAt;
-    @Column(length = 2000)
+    @Column(name = "oidc_id_token_metadata", length = 2000)
     private String oidcIdTokenMetadata;
-    @Column(length = 2000)
+    @Column(name = "oidc_id_token_claims", length = 2000)
     private String oidcIdTokenClaims;
     public Authorization(
             String id,

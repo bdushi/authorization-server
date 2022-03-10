@@ -1,21 +1,22 @@
 package al.bruno.identityserver.domain;
 
-import jakarta.persistence.IdClass;
 import al.bruno.identityserver.domain.AuthorizationConsent.AuthorizationConsentId;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
 @Entity
+@Table(name = "oauth2_authorization_consent")
 @IdClass(AuthorizationConsentId.class)
 public record AuthorizationConsent(
         @Id
+        @Column(name = "registered_client_id", updatable = false, insertable = false, unique = true, nullable = false)
         String registeredClientId,
         @Id
+        @Column(name = "principal_name", updatable = false, insertable = false, unique = true, nullable = false)
         String principalName,
-        @Column(length = 1000)
+        @Column(name = "authorities", length = 1000)
         String authorities
 ) {
     public record AuthorizationConsentId(

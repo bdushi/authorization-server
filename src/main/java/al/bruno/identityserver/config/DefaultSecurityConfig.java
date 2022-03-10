@@ -13,8 +13,11 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
 public class DefaultSecurityConfig {
+	private final UserServiceImpl userServiceImpl;
 	@Autowired
-	UserRepository userRepository;
+	public DefaultSecurityConfig(UserServiceImpl userServiceImpl) {
+		this.userServiceImpl = userServiceImpl;
+	}
 	@Bean
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 		http
@@ -25,15 +28,7 @@ public class DefaultSecurityConfig {
 			)
 			.cors(Customizer.withDefaults())
 			.formLogin(Customizer.withDefaults())
-			.apply(new FederatedIdentityConfigurer().oauth2UserHandler(userService()));
+			.apply(new FederatedIdentityConfigurer().oauth2UserHandler(userServiceImpl));
 		return http.build();
-	}
-	@Bean
-	public UserServiceImpl userService() {
-		return new UserServiceImpl(userRepository);
-	}
-	@Bean
-	public UserDetailsService userDetailsService() {
-		return userService();
 	}
 }
