@@ -1,7 +1,7 @@
 package al.bruno.identityserver.config;
 
 import al.bruno.identityserver.jose.Jwks;
-import al.bruno.identityserver.security.FederatedIdentityConfigurer;
+import al.bruno.identityserver.security.FederatedIdentityConfigure;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
@@ -22,7 +22,7 @@ public class AuthorizationServerConfig {
 	@Order(Ordered.HIGHEST_PRECEDENCE)
 	public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
 		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-		http.apply(new FederatedIdentityConfigurer());
+		http.apply(new FederatedIdentityConfigure());
 		return http
 				.cors(Customizer.withDefaults())
 				.formLogin(Customizer.withDefaults())

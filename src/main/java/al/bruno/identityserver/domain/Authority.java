@@ -7,25 +7,43 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "authority")
-public record Authority(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "id", updatable = false, insertable = false, unique = true, nullable = false)
-        Long id,
-        @Column(name = "authority", unique = true, updatable = false)
-        String authority,
-        @Column(name = "description")
-        String description
-) implements GrantedAuthority, Serializable {
-    @Override
-    public String getAuthority() {
-        return authority;
-    }
-
+public class Authority implements GrantedAuthority, Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, insertable = false, unique = true, nullable = false)
+    Long id;
+    @Column(name = "authority", unique = true, updatable = false)
+    String authority;
+    @Column(name = "description")
+    String description;
     /**
      * Default Constructor
      */
     public Authority() {
-        this(null, null, null);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setAuthority(String authority) {
+        this.authority = authority;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String getAuthority() {
+        return authority;
     }
 }

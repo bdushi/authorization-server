@@ -8,19 +8,34 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.function.Consumer;
 
 @Service
-public record UserServiceImpl(UserRepository userRepository) implements Consumer<OAuth2User>, UserDetailsService {
+public record UserServiceImpl(
+		UserRepository userRepository,
+		AuthorityService authorityService
+) implements Consumer<OAuth2User>, UserDetailsService {
 	@Override
-	public void accept(OAuth2User oAuth2User) {
+	public void accept(OAuth2User user) {
 		// Capture user in a local data store on first authentication
-		User user = userRepository.findByUsername(oAuth2User.getName());
-		if (userRepository.findByUsername(user.getName()) == null) {
+		if (userRepository.findByUsername(user.getAttribute("name")) == null) {
 			System.out.println("Saving first-time user: name=" + user.getName() + ", claims=" + user.getAttributes() + ", authorities=" + user.getAuthorities());
-			this.userRepository.save(user);
+			userRepository.save(
+					new User(
+							user.getAttribute("given_name"),
+							user.getAttribute("family_name"),
+							user.getAttribute("name"),
+							user.getAttribute("email"),
+							Collections.singleton(authorityService.findAuthority(1L)),
+							LocalDateTime.now(),
+							true,
+							true,
+							true,
+							true
+					)
+			);
 		}
 	}
 

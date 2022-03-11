@@ -1,6 +1,6 @@
 package al.bruno.identityserver.config;
 
-import al.bruno.identityserver.security.FederatedIdentityConfigurer;
+import al.bruno.identityserver.security.FederatedIdentityConfigure;
 import al.bruno.identityserver.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +28,7 @@ public class DefaultSecurityConfig {
                 )
                 .cors(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults())
-                .apply(new FederatedIdentityConfigurer().oauth2UserHandler(userServiceImpl));
+                .apply(new FederatedIdentityConfigure().oauth2UserHandler(userServiceImpl));
         return http.build();
     }
 }

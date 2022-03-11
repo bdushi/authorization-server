@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.security.jackson2.SecurityJackson2Modules;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -24,7 +26,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 @Service
-public class ClientService implements RegisteredClientRepository {
+public class ClientService implements RegisteredClientRepository /*ClientRegistrationRepository*/ {
     private final ClientRepository clientRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -149,5 +151,9 @@ public class ClientService implements RegisteredClientRepository {
             return ClientAuthenticationMethod.NONE;
         }
         return new ClientAuthenticationMethod(clientAuthenticationMethod);      // Custom client authentication method
+    }
+
+    public Client findByRegistrationId(String registrationId) {
+        return clientRepository.findByClientId(registrationId).orElseThrow();
     }
 }

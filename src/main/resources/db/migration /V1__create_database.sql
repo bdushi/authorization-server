@@ -22,14 +22,14 @@ CREATE TABLE authorization (
     access_token_metadata varchar(2000) DEFAULT NULL,
     access_token_type varchar(255) DEFAULT NULL,
     access_token_scopes varchar(1000) DEFAULT NULL,
-    refresh_token_value blob DEFAULT NULL,
+    refresh_token_value text DEFAULT NULL,
     refresh_token_issued_at timestamp DEFAULT NULL,
     refresh_token_expires_at timestamp DEFAULT NULL,
-    refresh_token_metadata blob DEFAULT NULL,
-    oidc_id_token_value blob DEFAULT NULL,
+    refresh_token_metadata text DEFAULT NULL,
+    oidc_id_token_value text DEFAULT NULL,
     oidc_id_token_issued_at timestamp DEFAULT NULL,
     oidc_id_token_expires_at timestamp DEFAULT NULL,
-    oidc_id_token_metadata blob DEFAULT NULL,
+    oidc_id_token_metadata text DEFAULT NULL,
     oidc_id_token_claims varchar(2000) DEFAULT NULL,
     PRIMARY KEY (id)
 );
@@ -49,26 +49,24 @@ CREATE TABLE oauth2_registered_client (
     token_settings varchar(2000) NOT NULL,
     PRIMARY KEY (id)
 );
+
 CREATE TABLE IF NOT EXISTS users (
         id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        address VARCHAR(255) NOT NULL,
-        user_date TIMESTAMP NOT NULL,
-        email VARCHAR(255) NOT NULL,
+        username VARCHAR(255) NOT NULL,
         first_name VARCHAR(255) NOT NULL,
         last_name VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        phone VARCHAR(255) NOT NULL,
-        username VARCHAR(255) NOT NULL,
-        city_id BIGINT NOT NULL,
-        country_id BIGINT NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        password VARCHAR(255),
+        address VARCHAR(255),
+        phone VARCHAR(255),
+        zip_code VARCHAR(255),
+        user_date TIMESTAMP NOT NULL,
         account_non_locked boolean NOT NULL,
         account_non_expired boolean NOT NULL,
         credentials_non_expired boolean NOT NULL,
-        status boolean NOT NULL
+        status boolean NOT NULL,
             UNIQUE (email),
-            UNIQUE (username),
-            FOREIGN KEY (city_id) REFERENCES city(id),
-            FOREIGN KEY (country_id) REFERENCES country(id)
+            UNIQUE (username)
     );
 
 CREATE TABLE IF NOT EXISTS authority (
@@ -78,7 +76,7 @@ CREATE TABLE IF NOT EXISTS authority (
             UNIQUE(authority)
     );
 
-CREATE TABLE IF NOT EXISTS users_authority (
+CREATE TABLE IF NOT EXISTS user_authority (
         user_id BIGINT NOT NULL,
         authority_id BIGINT NOT NULL,
         FOREIGN KEY (authority_id) REFERENCES authority(id),
