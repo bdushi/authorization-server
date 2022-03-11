@@ -54,6 +54,12 @@ public record User(
         @Column(name = "enabled", nullable = false)
         Boolean enabled
 ) implements OAuth2User, UserDetails, Serializable {
+    /**
+     * Default Constructor
+     */
+    public User() {
+        this(null, null, null, null, null, null, null, null, null, null, false, false, false, false);
+    }
     @Override
     public Map<String, Object> getAttributes() {
         return new ConcurrentHashMap<>();

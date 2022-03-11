@@ -33,5 +33,10 @@ public record Client(
     @Column(name = "token_settings", length = 2000)
     String tokenSettings
 ) {
-
+    /**
+     * Default Constructor
+     */
+    public Client() {
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
+    }
 }

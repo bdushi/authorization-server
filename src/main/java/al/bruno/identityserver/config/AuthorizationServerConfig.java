@@ -16,7 +16,6 @@ import org.springframework.security.config.annotation.web.configuration.OAuth2Au
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
 	@Bean

@@ -74,8 +74,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS authority (
         id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         description VARCHAR(255),
-        authority_name VARCHAR(255),
-            UNIQUE(authority_name)
+        authority VARCHAR(255),
+            UNIQUE(authority)
     );
 
 CREATE TABLE IF NOT EXISTS users_authority (

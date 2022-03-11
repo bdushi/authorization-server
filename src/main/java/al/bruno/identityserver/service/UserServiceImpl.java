@@ -28,19 +28,4 @@ public record UserServiceImpl(UserRepository userRepository) implements Consumer
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		return userRepository.loadUserByUsername(username);
 	}
-
-//	static class UserRepository {
-//
-//		private final Map<String, OAuth2User> userCache = new ConcurrentHashMap<>();
-//
-//		public OAuth2User findByName(String name) {
-//			return this.userCache.get(name);
-//		}
-//
-//		public void save(OAuth2User oauth2User) {
-//			this.userCache.put(oauth2User.getName(), oauth2User);
-//		}
-//
-//	}
-
 }

@@ -59,6 +59,19 @@ public class Authorization {
     private String oidcIdTokenMetadata;
     @Column(name = "oidc_id_token_claims", length = 2000)
     private String oidcIdTokenClaims;
+
+    /**
+     * Default Constructor
+     */
+    public Authorization() {
+        this.id = null;
+        this.registeredClientId = null;
+        this.principalName = null;
+        this.authorizationGrantType = null;
+        this.attributes = null;
+        this.state = null;
+    }
+
     public Authorization(
             String id,
             String registeredClientId,

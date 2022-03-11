@@ -8,5 +8,4 @@ public class IdentityServerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(IdentityServerApplication.class, args);
 	}
-
 }

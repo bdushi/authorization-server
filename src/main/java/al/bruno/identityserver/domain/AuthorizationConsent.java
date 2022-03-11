@@ -23,6 +23,12 @@ public record AuthorizationConsent(
             String registeredClientId,
             String principalName
     ) implements Serializable {
+        /**
+         * Default Constructor
+         */
+        public AuthorizationConsentId() {
+            this(null, null);
+        }
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -30,10 +36,15 @@ public record AuthorizationConsent(
             var that = (AuthorizationConsentId) o;
             return registeredClientId.equals(that.registeredClientId) && principalName.equals(that.principalName);
         }
-
         @Override
         public int hashCode() {
             return Objects.hash(registeredClientId, principalName);
         }
+    }
+    /**
+     * Default Constructor
+     */
+    public AuthorizationConsent() {
+        this(null, null, null);
     }
 }
