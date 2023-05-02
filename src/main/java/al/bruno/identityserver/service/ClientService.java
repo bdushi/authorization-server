@@ -1,43 +1,34 @@
 package al.bruno.identityserver.service;
 
+import al.bruno.identityserver.domain.Client;
+import al.bruno.identityserver.repository.ClientRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import al.bruno.identityserver.domain.*;
-import al.bruno.identityserver.repository.ClientRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.springframework.security.jackson2.SecurityJackson2Modules;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
-import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
-
 @Service
-public class ClientService implements RegisteredClientRepository /*ClientRegistrationRepository*/ {
+public class ClientService implements RegisteredClientRepository {
     private final ClientRepository clientRepository;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper();
 
+    @Autowired
     public ClientService(ClientRepository clientRepository) {
         Assert.notNull(clientRepository, "clientRepository cannot be null");
         this.clientRepository = clientRepository;
-
-        ClassLoader classLoader = ClientService.class.getClassLoader();
-        List<Module> securityModules = SecurityJackson2Modules.getModules(classLoader);
-        this.objectMapper.registerModules(securityModules);
-        this.objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
     }
 
     @Override
@@ -55,41 +46,38 @@ public class ClientService implements RegisteredClientRepository /*ClientRegistr
     @Override
     public RegisteredClient findByClientId(String clientId) {
         Assert.hasText(clientId, "clientId cannot be empty");
-        return this.clientRepository.findByClientId(clientId).map(this::toObject).orElse(null);
+        return this.clientRepository.findByClientId(clientId).map(this::toObject).orElseThrow();
     }
 
     private RegisteredClient toObject(Client client) {
         Set<String> clientAuthenticationMethods = StringUtils.commaDelimitedListToSet(
-                client.clientName());
+                client.getClientAuthenticationMethods());
         Set<String> authorizationGrantTypes = StringUtils.commaDelimitedListToSet(
-                client.authorizationGrantTypes());
+                client.getAuthorizationGrantTypes());
         Set<String> redirectUris = StringUtils.commaDelimitedListToSet(
-                client.redirectUris());
-        Set<String> clientScopes = StringUtils.commaDelimitedListToSet(
-                client.scopes());
-
-        RegisteredClient.Builder builder = RegisteredClient.withId(client.id())
-                .clientId(client.clientId())
-                .clientIdIssuedAt(client.clientIdIssuedAt())
-                .clientSecret(client.clientSecret())
-                .clientSecretExpiresAt(client.clientSecretExpiresAt())
-                .clientName(client.clientName())
+                client.getRedirectUris());
+        Set<String> scopes = StringUtils.commaDelimitedListToSet(
+                client.getScopes());
+        return RegisteredClient
+                .withId(client.getId())
+                .clientId(client.getClientId())
+                .clientIdIssuedAt(client.getClientIdIssuedAt())
+                .clientSecret(client.getClientSecret())
+                .clientSecretExpiresAt(client.getClientSecretExpiresAt())
+                .clientName(client.getClientName())
                 .clientAuthenticationMethods(authenticationMethods ->
-                        clientAuthenticationMethods.forEach(authenticationMethod ->
-                                authenticationMethods.add(resolveClientAuthenticationMethod(authenticationMethod))))
+                clientAuthenticationMethods.forEach(authenticationMethod ->
+                        authenticationMethods.add(resolveClientAuthenticationMethod(authenticationMethod)))
+                )
                 .authorizationGrantTypes((grantTypes) ->
                         authorizationGrantTypes.forEach(grantType ->
-                                grantTypes.add(resolveAuthorizationGrantType(grantType))))
-                .redirectUris((uris) -> uris.addAll(redirectUris))
-                .scopes((scopes) -> scopes.addAll(clientScopes));
-
-        Map<String, Object> clientSettingsMap = parseMap(client.clientSettings());
-        builder.clientSettings(ClientSettings.withSettings(clientSettingsMap).build());
-
-        Map<String, Object> tokenSettingsMap = parseMap(client.tokenSettings());
-        builder.tokenSettings(TokenSettings.withSettings(tokenSettingsMap).build());
-
-        return builder.build();
+                                grantTypes.add(resolveAuthorizationGrantType(grantType)))
+                )
+                .redirectUris(uris -> uris.addAll(redirectUris))
+                .scopes(scope -> scope.addAll(scopes))
+                .clientSettings(ClientSettings.withSettings(parseMap(client.getClientSettings())).build())
+                .tokenSettings(TokenSettings.withSettings(parseMap(client.getTokenSettings())).build())
+                .build();
     }
 
     private Client toEntity(RegisteredClient registeredClient) {
@@ -102,9 +90,7 @@ public class ClientService implements RegisteredClientRepository /*ClientRegistr
         return new Client(
                 registeredClient.getId(),
                 registeredClient.getClientId(),
-                registeredClient.getClientIdIssuedAt(),
                 registeredClient.getClientSecret(),
-                registeredClient.getClientSecretExpiresAt(),
                 registeredClient.getClientName(),
                 StringUtils.collectionToCommaDelimitedString(clientAuthenticationMethods),
                 StringUtils.collectionToCommaDelimitedString(authorizationGrantTypes),

@@ -1,50 +1,48 @@
 package al.bruno.identityserver.domain;
 
-import al.bruno.identityserver.domain.AuthorizationConsent.AuthorizationConsentId;
-
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "oauth2_authorization_consent")
 @IdClass(AuthorizationConsentId.class)
-public record AuthorizationConsent(
+public class AuthorizationConsent {
         @Id
+        @GeneratedValue(strategy = GenerationType.UUID)
         @Column(name = "registered_client_id", updatable = false, insertable = false, unique = true, nullable = false)
-        String registeredClientId,
-        @Id
-        @Column(name = "principal_name", updatable = false, insertable = false, unique = true, nullable = false)
-        String principalName,
+        private String registeredClientId;
+        @Id @Column(name = "principal_name", updatable = false, insertable = false, unique = true, nullable = false)
+        private String principalName;
         @Column(name = "authorities", length = 1000)
-        String authorities
-) {
-    public record AuthorizationConsentId(
-            String registeredClientId,
-            String principalName
-    ) implements Serializable {
-        /**
-         * Default Constructor
-         */
-        public AuthorizationConsentId() {
-            this(null, null);
+        private String authorities;
+
+
+        public AuthorizationConsent(String registeredClientId, String principalName, String authorities) {
+                this.registeredClientId = registeredClientId;
+                this.principalName = principalName;
+                this.authorities = authorities;
         }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            var that = (AuthorizationConsentId) o;
-            return registeredClientId.equals(that.registeredClientId) && principalName.equals(that.principalName);
+
+        public String getRegisteredClientId() {
+                return registeredClientId;
         }
-        @Override
-        public int hashCode() {
-            return Objects.hash(registeredClientId, principalName);
+
+        public void setRegisteredClientId(String registeredClientId) {
+                this.registeredClientId = registeredClientId;
         }
-    }
-    /**
-     * Default Constructor
-     */
-    public AuthorizationConsent() {
-        this(null, null, null);
-    }
+
+        public String getPrincipalName() {
+                return principalName;
+        }
+
+        public void setPrincipalName(String principalName) {
+                this.principalName = principalName;
+        }
+
+        public String getAuthorities() {
+                return authorities;
+        }
+
+        public void setAuthorities(String authorities) {
+                this.authorities = authorities;
+        }
 }

@@ -1,5 +1,8 @@
 package al.bruno.identityserver.security;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -11,9 +14,6 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public final class FederatedIdentityAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -32,7 +32,7 @@ public final class FederatedIdentityAuthenticationEntryPoint implements Authenti
 	}
 
 	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authenticationException) throws IOException, ServletException {
+	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authenticationException) throws IOException, ServletException, ServletException {
 		String idp = request.getParameter("idp");
 		if (idp != null) {
 			ClientRegistration clientRegistration = this.clientRegistrationRepository.findByRegistrationId(idp);

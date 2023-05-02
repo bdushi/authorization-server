@@ -6,20 +6,21 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Entity
 @Table(name = "users")
 public class User implements OAuth2User, UserDetails, Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, insertable = false, unique = true, nullable = false)
-    private Long id;
+    private String id;
     @Column(name = "first_name", nullable = false)
     private String firstName;
     @Column(name = "last_name", nullable = false)
@@ -44,9 +45,6 @@ public class User implements OAuth2User, UserDetails, Serializable {
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id")
     )
     private Collection<Authority> authorities;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSSSS")
-    @Column(name = "user_date", columnDefinition = "TIMESTAMP", nullable = false)
-    private LocalDateTime date;
     @Column(name = "account_non_locked", nullable = false)
     private Boolean accountNonLocked;
     @Column(name = "account_non_expired", nullable = false)
@@ -55,13 +53,13 @@ public class User implements OAuth2User, UserDetails, Serializable {
     private Boolean credentialsNonExpired;
     @Column(name = "status", nullable = false)
     private Boolean enabled;
+    @Column(nullable = false, updatable = false)
+    private OffsetDateTime dateCreated;
+    @Column(nullable = false)
+    private OffsetDateTime lastUpdated;
 
-    /**
-     * Default Constructor
-     */
-    public User() {
-
-    }
+    @Transient
+    private Map<String, Object> attributes;
 
     /**
      * Default Constructor
@@ -72,7 +70,8 @@ public class User implements OAuth2User, UserDetails, Serializable {
             String username,
             String email,
             Collection<Authority> authorities,
-            LocalDateTime date,
+            OffsetDateTime dateCreated,
+            OffsetDateTime lastUpdated,
             Boolean accountNonLocked,
             Boolean accountNonExpired,
             Boolean credentialsNonExpired,
@@ -83,18 +82,30 @@ public class User implements OAuth2User, UserDetails, Serializable {
         this.username = username;
         this.email = email;
         this.authorities = authorities;
-        this.date = date;
+        this.dateCreated = dateCreated;
+        this.lastUpdated = lastUpdated;
         this.accountNonLocked = accountNonLocked;
         this.accountNonExpired = accountNonExpired;
         this.credentialsNonExpired = credentialsNonExpired;
         this.enabled = enabled;
     }
 
-    public Long getId() {
+    @PrePersist
+    public void prePersist() {
+        dateCreated = OffsetDateTime.now();
+        lastUpdated = dateCreated;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        lastUpdated = OffsetDateTime.now();
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -158,14 +169,6 @@ public class User implements OAuth2User, UserDetails, Serializable {
         this.authorities = authorities;
     }
 
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
     public Boolean getAccountNonLocked() {
         return accountNonLocked;
     }
@@ -198,9 +201,31 @@ public class User implements OAuth2User, UserDetails, Serializable {
         this.enabled = enabled;
     }
 
+    public OffsetDateTime getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(OffsetDateTime dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public OffsetDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(OffsetDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
     @Override
     public Map<String, Object> getAttributes() {
-        return new ConcurrentHashMap<>();
+        if (this.attributes == null) {
+            this.attributes = new HashMap<>();
+            this.attributes.put("id", this.getId());
+            this.attributes.put("name", this.getName());
+            this.attributes.put("email", this.getEmail());
+        }
+        return attributes;
     }
 
     @Override

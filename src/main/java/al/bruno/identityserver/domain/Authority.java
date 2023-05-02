@@ -1,32 +1,42 @@
 package al.bruno.identityserver.domain;
 
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "authority")
 public class Authority implements GrantedAuthority, Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, insertable = false, unique = true, nullable = false)
-    Long id;
+    String id;
     @Column(name = "authority", unique = true, updatable = false)
     String authority;
     @Column(name = "description")
     String description;
-    /**
-     * Default Constructor
-     */
-    public Authority() {
+    @Column(nullable = false, updatable = false)
+    private OffsetDateTime dateCreated;
+    @Column(nullable = false)
+    private OffsetDateTime lastUpdated;
+
+    @PrePersist
+    public void prePersist() {
+        dateCreated = OffsetDateTime.now();
+        lastUpdated = dateCreated;
     }
 
-    public Long getId() {
+    @PreUpdate
+    public void preUpdate() {
+        lastUpdated = OffsetDateTime.now();
+    }
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -45,5 +55,21 @@ public class Authority implements GrantedAuthority, Serializable {
     @Override
     public String getAuthority() {
         return authority;
+    }
+
+    public OffsetDateTime getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(OffsetDateTime dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public OffsetDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(OffsetDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }

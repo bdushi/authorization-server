@@ -50,7 +50,7 @@ public class AuthorizationConsentService implements OAuth2AuthorizationConsentSe
     }
 
     private OAuth2AuthorizationConsent toObject(AuthorizationConsent authorizationConsent) {
-        String registeredClientId = authorizationConsent.registeredClientId();
+        String registeredClientId = authorizationConsent.getRegisteredClientId();
         RegisteredClient registeredClient = this.registeredClientRepository.findById(registeredClientId);
         if (registeredClient == null) {
             throw new DataRetrievalFailureException(
@@ -58,9 +58,9 @@ public class AuthorizationConsentService implements OAuth2AuthorizationConsentSe
         }
 
         OAuth2AuthorizationConsent.Builder builder = OAuth2AuthorizationConsent.withId(
-                registeredClientId, authorizationConsent.principalName());
-        if (authorizationConsent.authorities() != null) {
-            for (String authority : StringUtils.commaDelimitedListToSet(authorizationConsent.authorities())) {
+                registeredClientId, authorizationConsent.getPrincipalName());
+        if (authorizationConsent.getAuthorities() != null) {
+            for (String authority : StringUtils.commaDelimitedListToSet(authorizationConsent.getAuthorities())) {
                 builder.authority(new SimpleGrantedAuthority(authority));
             }
         }

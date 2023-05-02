@@ -6,8 +6,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.oauth2.server.authorization.JwtEncodingContext;
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer;
 import org.springframework.util.Assert;
 
 import java.util.function.Consumer;
@@ -99,18 +97,15 @@ public final class FederatedIdentityConfigure extends AbstractHttpConfigurer<Fed
 				}
 			});
 	}
-	// @formatter:on
 
-	@Override
-	public void setBuilder(HttpSecurity http) {
-		// Set the default the OAuth2TokenCustomizer so the OAuth2AuthorizationServerConfigurer can use it
-		http.setSharedObject(OAuth2TokenCustomizer.class, idTokenCustomizer());
+//	@Override
+//	public void setBuilder(HttpSecurity http) {
+//		http.setSharedObject(OAuth2TokenCustomizer.class, idTokenCustomizer());
+//		super.setBuilder(http);
+//	}
 
-		super.setBuilder(http);
-	}
-
-	private static OAuth2TokenCustomizer<JwtEncodingContext> idTokenCustomizer() {
-		return new FederatedIdentityIdTokenCustomizer();
-	}
+//	private static OAuth2TokenCustomizer<JwtEncodingContext> idTokenCustomizer() {
+//		return new FederatedIdentityIdTokenCustomizer();
+//	}
 
 }
