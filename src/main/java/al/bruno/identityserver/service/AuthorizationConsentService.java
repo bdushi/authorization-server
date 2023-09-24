@@ -9,12 +9,14 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Service
 public class AuthorizationConsentService implements OAuth2AuthorizationConsentService {
     private final AuthorizationConsentRepository authorizationConsentRepository;
     private final RegisteredClientRepository registeredClientRepository;
@@ -48,7 +50,7 @@ public class AuthorizationConsentService implements OAuth2AuthorizationConsentSe
     }
 
     private OAuth2AuthorizationConsent toObject(AuthorizationConsent authorizationConsent) {
-        String registeredClientId = authorizationConsent.registeredClientId();
+        String registeredClientId = authorizationConsent.getRegisteredClientId();
         RegisteredClient registeredClient = this.registeredClientRepository.findById(registeredClientId);
         if (registeredClient == null) {
             throw new DataRetrievalFailureException(
@@ -56,9 +58,9 @@ public class AuthorizationConsentService implements OAuth2AuthorizationConsentSe
         }
 
         OAuth2AuthorizationConsent.Builder builder = OAuth2AuthorizationConsent.withId(
-                registeredClientId, authorizationConsent.principalName());
-        if (authorizationConsent.authorities() != null) {
-            for (String authority : StringUtils.commaDelimitedListToSet(authorizationConsent.authorities())) {
+                registeredClientId, authorizationConsent.getPrincipalName());
+        if (authorizationConsent.getAuthorities() != null) {
+            for (String authority : StringUtils.commaDelimitedListToSet(authorizationConsent.getAuthorities())) {
                 builder.authority(new SimpleGrantedAuthority(authority));
             }
         }

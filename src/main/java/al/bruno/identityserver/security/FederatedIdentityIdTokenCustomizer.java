@@ -6,14 +6,14 @@ import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.oauth2.server.authorization.JwtEncodingContext;
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 
 import java.util.*;
 
 public final class FederatedIdentityIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
 
-	private static final Set<String> ID_TOKEN_CLAIMS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+	private static final Set<String> ID_TOKEN_CLAIMS = Set.of(
 			IdTokenClaimNames.ISS,
 			IdTokenClaimNames.SUB,
 			IdTokenClaimNames.AUD,
@@ -26,7 +26,7 @@ public final class FederatedIdentityIdTokenCustomizer implements OAuth2TokenCust
 			IdTokenClaimNames.AZP,
 			IdTokenClaimNames.AT_HASH,
 			IdTokenClaimNames.C_HASH
-	)));
+	);
 
 	@Override
 	public void customize(JwtEncodingContext context) {

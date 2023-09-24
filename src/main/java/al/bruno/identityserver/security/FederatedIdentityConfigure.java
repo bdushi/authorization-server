@@ -6,13 +6,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.oauth2.server.authorization.JwtEncodingContext;
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer;
 import org.springframework.util.Assert;
 
 import java.util.function.Consumer;
 
-public final class FederatedIdentityConfigurer extends AbstractHttpConfigurer<FederatedIdentityConfigurer, HttpSecurity> {
+public final class FederatedIdentityConfigure extends AbstractHttpConfigurer<FederatedIdentityConfigure, HttpSecurity> {
 
 	private String loginPageUrl = "/login";
 
@@ -26,7 +24,7 @@ public final class FederatedIdentityConfigurer extends AbstractHttpConfigurer<Fe
 	 * @param loginPageUrl The URL of the login page, defaults to {@code "/login"}
 	 * @return This configurer for additional configuration
 	 */
-	public FederatedIdentityConfigurer loginPageUrl(String loginPageUrl) {
+	public FederatedIdentityConfigure loginPageUrl(String loginPageUrl) {
 		Assert.hasText(loginPageUrl, "loginPageUrl cannot be empty");
 		this.loginPageUrl = loginPageUrl;
 		return this;
@@ -38,7 +36,7 @@ public final class FederatedIdentityConfigurer extends AbstractHttpConfigurer<Fe
 	 * "/oauth2/authorization/{registrationId}"}
 	 * @return This configurer for additional configuration
 	 */
-	public FederatedIdentityConfigurer authorizationRequestUri(String authorizationRequestUri) {
+	public FederatedIdentityConfigure authorizationRequestUri(String authorizationRequestUri) {
 		Assert.hasText(authorizationRequestUri, "authorizationRequestUri cannot be empty");
 		this.authorizationRequestUri = authorizationRequestUri;
 		return this;
@@ -49,7 +47,7 @@ public final class FederatedIdentityConfigurer extends AbstractHttpConfigurer<Fe
 	 * with an Auth 2.0 IDP
 	 * @return This configurer for additional configuration
 	 */
-	public FederatedIdentityConfigurer oauth2UserHandler(Consumer<OAuth2User> oauth2UserHandler) {
+	public FederatedIdentityConfigure oauth2UserHandler(Consumer<OAuth2User> oauth2UserHandler) {
 		Assert.notNull(oauth2UserHandler, "oauth2UserHandler cannot be null");
 		this.oauth2UserHandler = oauth2UserHandler;
 		return this;
@@ -60,18 +58,16 @@ public final class FederatedIdentityConfigurer extends AbstractHttpConfigurer<Fe
 	 * with an OpenID Connect 1.0 IDP
 	 * @return This configurer for additional configuration
 	 */
-	public FederatedIdentityConfigurer oidcUserHandler(Consumer<OidcUser> oidcUserHandler) {
+	public FederatedIdentityConfigure oidcUserHandler(Consumer<OidcUser> oidcUserHandler) {
 		Assert.notNull(oidcUserHandler, "oidcUserHandler cannot be null");
 		this.oidcUserHandler = oidcUserHandler;
 		return this;
 	}
 
-	// @formatter:off
 	@Override
 	public void init(HttpSecurity http) throws Exception {
 		ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
-		ClientRegistrationRepository clientRegistrationRepository =
-			applicationContext.getBean(ClientRegistrationRepository.class);
+		ClientRegistrationRepository clientRegistrationRepository = applicationContext.getBean(ClientRegistrationRepository.class);
 		FederatedIdentityAuthenticationEntryPoint authenticationEntryPoint =
 			new FederatedIdentityAuthenticationEntryPoint(this.loginPageUrl, clientRegistrationRepository);
 		if (this.authorizationRequestUri != null) {
@@ -101,18 +97,15 @@ public final class FederatedIdentityConfigurer extends AbstractHttpConfigurer<Fe
 				}
 			});
 	}
-	// @formatter:on
 
-	@Override
-	public void setBuilder(HttpSecurity http) {
-		// Set the default the OAuth2TokenCustomizer so the OAuth2AuthorizationServerConfigurer can use it
-		http.setSharedObject(OAuth2TokenCustomizer.class, idTokenCustomizer());
+//	@Override
+//	public void setBuilder(HttpSecurity http) {
+//		http.setSharedObject(OAuth2TokenCustomizer.class, idTokenCustomizer());
+//		super.setBuilder(http);
+//	}
 
-		super.setBuilder(http);
-	}
-
-	private static OAuth2TokenCustomizer<JwtEncodingContext> idTokenCustomizer() {
-		return new FederatedIdentityIdTokenCustomizer();
-	}
+//	private static OAuth2TokenCustomizer<JwtEncodingContext> idTokenCustomizer() {
+//		return new FederatedIdentityIdTokenCustomizer();
+//	}
 
 }

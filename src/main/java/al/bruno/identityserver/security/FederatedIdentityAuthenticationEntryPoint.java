@@ -32,7 +32,7 @@ public final class FederatedIdentityAuthenticationEntryPoint implements Authenti
 	}
 
 	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authenticationException) throws IOException, ServletException {
+	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authenticationException) throws IOException, ServletException, ServletException {
 		String idp = request.getParameter("idp");
 		if (idp != null) {
 			ClientRegistration clientRegistration = this.clientRegistrationRepository.findByRegistrationId(idp);

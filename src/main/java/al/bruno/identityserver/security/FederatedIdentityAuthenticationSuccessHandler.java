@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+
 import java.io.IOException;
 import java.util.function.Consumer;
 
@@ -21,7 +22,7 @@ public final class FederatedIdentityAuthenticationSuccessHandler implements Auth
 	private Consumer<OidcUser> oidcUserHandler = (user) -> this.oauth2UserHandler.accept(user);
 
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException, ServletException {
 		if (authentication instanceof OAuth2AuthenticationToken) {
 			if (authentication.getPrincipal() instanceof OidcUser) {
 				this.oidcUserHandler.accept((OidcUser) authentication.getPrincipal());
