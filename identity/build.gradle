@@ -5,20 +5,6 @@ plugins {
     id 'org.flywaydb.flyway'
 }
 
-group = 'al.bruno'
-version = '0.0.1-SNAPSHOT'
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_19
-    targetCompatibility = JavaVersion.VERSION_19
-}
-
-repositories {
-    mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }
-    maven { url 'https://repo.spring.io/snapshot' }
-}
-
 flyway {
     url = 'jdbc:postgresql://manny.db.elephantsql.com/dokmomrd'
     user = 'dokmomrd'
