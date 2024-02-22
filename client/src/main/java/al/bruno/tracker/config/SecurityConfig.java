@@ -1,6 +1,5 @@
 package al.bruno.tracker.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,55 +13,46 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @EnableWebSecurity
 public class SecurityConfig {
+    @Bean
+    WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/webjars/**");
+    }
 
-//	@Bean
-//	WebSecurityCustomizer webSecurityCustomizer() {
-//		return (web) -> web.ignoring().requestMatchers("/webjars/**");
-//	}
-//
-//	@Bean
-//	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//		http
-//			.authorizeHttpRequests(authorizeRequests ->
-//				authorizeRequests.anyRequest().authenticated()
-//			)
-//			.oauth2Login(oauth2Login ->
-//				oauth2Login.loginPage("/oauth2/authorization/messaging-client-oidc"))
-//			.oauth2Client(withDefaults());
-//		return http.build();
-//	}
+    @Bean
+    SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            ClientRegistrationRepository clientRegistrationRepository
+    ) throws Exception {
+        return http
+                .authorizeHttpRequests(authorize ->
+                        authorize
+                                .anyRequest()
+                                .authenticated()
+                )
+                .oauth2Login(oauth2Login ->
+                        oauth2Login
+                                .loginPage("/oauth2/authorization/messaging-client-oidc")
+                )
+                .oauth2Client(withDefaults())
+                .logout(logout ->
+                        logout
+                                .logoutSuccessHandler(
+                                        oidcLogoutSuccessHandler(clientRegistrationRepository)
+                                )
+                ).build();
+    }
 
-	@Autowired
-	private ClientRegistrationRepository clientRegistrationRepository;
+    private LogoutSuccessHandler oidcLogoutSuccessHandler(
+            ClientRegistrationRepository clientRegistrationRepository
+    ) {
+        OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler =
+                new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
 
-	@Bean
-	WebSecurityCustomizer webSecurityCustomizer() {
-		return (web) -> web.ignoring().requestMatchers("/webjars/**");
-	}
+        // Set the location that the End-User's User Agent will be redirected to
+        // after the logout has been performed at the Provider
+        oidcLogoutSuccessHandler
+                .setPostLogoutRedirectUri("{baseUrl}/index");
 
-	// @formatter:off
-	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		return http
-				.authorizeHttpRequests(authorize ->
-						authorize.anyRequest().authenticated()
-				)
-				.oauth2Login(oauth2Login ->
-						oauth2Login.loginPage("/oauth2/authorization/messaging-client-oidc"))
-				.oauth2Client(withDefaults())
-				.logout(logout ->
-						logout.logoutSuccessHandler(oidcLogoutSuccessHandler())
-				).build();
-	}
-
-	private LogoutSuccessHandler oidcLogoutSuccessHandler() {
-		OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler =
-				new OidcClientInitiatedLogoutSuccessHandler(this.clientRegistrationRepository);
-
-		// Set the location that the End-User's User Agent will be redirected to
-		// after the logout has been performed at the Provider
-		oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}/index");
-
-		return oidcLogoutSuccessHandler;
-	}
+        return oidcLogoutSuccessHandler;
+    }
 }

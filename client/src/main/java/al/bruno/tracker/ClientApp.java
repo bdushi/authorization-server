@@ -4,10 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MessagesClientApplication {
-
+public class ClientApp {
 	public static void main(String[] args) {
-		SpringApplication.run(MessagesClientApplication.class, args);
+		SpringApplication.run(ClientApp.class, args);
 	}
-
 }
