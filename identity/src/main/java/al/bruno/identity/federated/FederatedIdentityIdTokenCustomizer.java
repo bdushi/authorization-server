@@ -1,4 +1,4 @@
-package al.bruno.identity.security;
+package al.bruno.identity.federated;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
@@ -58,5 +58,4 @@ public final class FederatedIdentityIdTokenCustomizer implements OAuth2TokenCust
 
 		return new HashMap<>(claims);
 	}
-
 }

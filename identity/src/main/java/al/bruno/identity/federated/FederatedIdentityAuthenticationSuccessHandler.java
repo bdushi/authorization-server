@@ -1,4 +1,4 @@
-package al.bruno.identity.security;
+package al.bruno.identity.federated;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
