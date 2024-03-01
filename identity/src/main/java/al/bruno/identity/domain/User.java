@@ -1,11 +1,11 @@
 package al.bruno.identity.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Collection;

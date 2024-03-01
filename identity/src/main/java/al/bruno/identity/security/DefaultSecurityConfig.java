@@ -16,9 +16,11 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 @EnableWebSecurity
 @Configuration(proxyBeanMethods = false)
 public class DefaultSecurityConfig {
-
-    @Autowired
-    public UserService userService;
+//    private final UserService userService;
+//
+//    public DefaultSecurityConfig(UserService userService) {
+//        this.userService = userService;
+//    }
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -38,19 +40,7 @@ public class DefaultSecurityConfig {
                                 .successHandler(authenticationSuccessHandler())
                 ).build();
     }
-//    @Bean
-//    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeHttpRequests(authorize ->
-//                        authorize
-//                                .requestMatchers("/assets/**", "/webjars/**", "/login").permitAll()
-//                                .anyRequest().authenticated()
-//                )
-//                .formLogin(Customizer.withDefaults())
-//                .cors(Customizer.withDefaults())
-//                .apply(new FederatedIdentityConfigure().oauth2UserHandler(userService));
-//        return http.build();
-//    }
+
     private AuthenticationSuccessHandler authenticationSuccessHandler() {
         return new FederatedIdentityAuthenticationSuccessHandler();
     }

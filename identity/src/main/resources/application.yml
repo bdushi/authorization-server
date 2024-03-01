@@ -1,0 +1,64 @@
+server:
+  address: 0.0.0.0
+  port: 9000
+# none, validate, update, create, create-drop
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+#        Will be selected by default
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: true
+        # formatting
+        format_sql: true
+        # to show sql
+        show_sql: true
+        #printing parameter values in order
+        type.descriptor.sql: TRACE
+  # Postgresql
+  datasource:
+    driverClassName: org.postgresql.Driver
+    # driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://manny.db.elephantsql.com/dokmomrd
+    username: dokmomrd
+    password: quVhbS-JqMGPkE5DTjlcJeWUTKxrxmM1
+    testWhileIdle: true
+    validationQuery: SELECT 1
+  security:
+    oauth2:
+      client:
+        registration:
+          google-idp:
+            provider: google
+            client-id: 417166259656-79ha4kf2hrqf4dn2f5s0g6s9vsj0q7ev.apps.googleusercontent.com
+            client-secret: ZenS4R_qIdn85U6kkwdTxJfx
+            scope: openid, https://www.googleapis.com/auth/userinfo.profile, https://www.googleapis.com/auth/userinfo.email
+            client-name: Sign in with Google
+        provider:
+          google:
+            user-name-attribute: email
+# spring.sql.init.mode=always
+# spring.jpa.generate-ddl = true
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    com.bytestree.restful: INFO
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.security.oauth2: INFO
+# FLYWAY
+flyway:
+  enabled: true
+  locations: classpath:db/migration
+  url: jdbc:postgresql://manny.db.elephantsql.com/
+  password: quVhbS-JqMGPkE5DTjlcJeWUTKxrxmM1
+  user: dokmomrd
+  schemas: dokmomrd
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, health, flyway

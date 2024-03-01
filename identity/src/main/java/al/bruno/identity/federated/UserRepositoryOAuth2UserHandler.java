@@ -19,6 +19,7 @@ package al.bruno.identity.federated;
 
 import al.bruno.identity.domain.User;
 import al.bruno.identity.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Map;
@@ -37,6 +38,7 @@ public final class UserRepositoryOAuth2UserHandler implements Consumer<OAuth2Use
 
 	private final UserRepository userRepository;
 
+	@Autowired
 	public UserRepositoryOAuth2UserHandler(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
